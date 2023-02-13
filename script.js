@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	addBox(document.body, 50, 50, 10, 10, "red");
 	addBox(document.body, 50, 50, 100, 10, "blue");
 	addBox(document.body, 50, 50,  10, 100, "green");
-	console.log(document.querySelectorAll(".box"));
+	const pairs = getBoxPairs(document.querySelectorAll(".box"));
+	console.log(pairs);
 });
 
 function addBox(container, width, height, posX, posY, color) {
@@ -30,8 +31,8 @@ function drawLines(boxes) {
 
 function getBoxPairs(boxes) {
 	const boxPairs = [];
-	for (const box1 in boxes) {
-		for (const box2 in boxes) {
+	for (const box1 of boxes) {
+		for (const box2 of boxes) {
 			if (box1 != box2) {
 				boxPairs.push([box1, box2]);
 			}
