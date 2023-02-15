@@ -2,10 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	addBox(document.body, 50, 50, 10, 10, "red");
 	addBox(document.body, 50, 50, 100, 10, "blue");
 	addBox(document.body, 50, 50, 10, 100, "green");
-	const pairs = getBoxPairs(document.querySelectorAll(".box"));
-	console.log(pairs);
-	// addButtons(document.body, 3, pairs);
-
 });
 
 function addBox(container, width, height, posX, posY, color) {
@@ -27,8 +23,12 @@ function addBox(container, width, height, posX, posY, color) {
 	return box;
 }
 
-function drawLines(boxes) {
-
+function addBoxes(container, boxCount, width, height, startX, startY, space) {
+	const boxes = [];
+	for (let i = 0; i < boxCount; i++) {
+		boxes.push(addBox(container, width, height, startX + i * (width * space), startY, getRandomColor()));
+	}
+	return boxes;
 }
 
 function getBoxPairs(boxes) {
@@ -73,22 +73,12 @@ function changeColors(boxes, colors) {
 	}
 }
 
+function changeColorsRandom(boxes) {
+	for (const box of boxes) {
+		changeColor(box, getRandomColor());
+	}
+}
+
 function getRandomColor() {
 	return `#${(Math.floor(Math.random() * 16777216)).toString(16)}`;
-}
-
-function getRandomColorPair() {
-	return [getRandomColor(), getRandomColor()];
-}
-
-function addButtons(container, count, pairs) {
-	for (let i = 0; i < count; i++) {
-		const button = document.createElement("button");
-		button.innerText = `Pair ${i + 1}`;
-		button.addEventListener("click", () => {
-			const colors = getRandomColorPair();
-			changeColors(pairs[i], colors);
-		});
-		container.appendChild(button);
-	}
 }
