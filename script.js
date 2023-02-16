@@ -1,7 +1,11 @@
+let connectedBoxes = [];
+let connectionSwitch = false;
+let activeBoxPair = [];
 document.addEventListener("DOMContentLoaded", () => {
-	addBox(document.body, 50, 50, 10, 10, "red");
-	addBox(document.body, 50, 50, 100, 10, "blue");
-	addBox(document.body, 50, 50, 10, 100, "green");
+	const container = document.querySelector("#container");
+	addBoxes(container, 5, 50, 50, 20, 20, 10);
+	addConnectionButton(container, 200, 50, "Start connection", 20, 200);
+	createCanvasAndGetContext(container);
 });
 
 function addBox(container, width, height, posX, posY, color) {
@@ -20,13 +24,24 @@ function addBox(container, width, height, posX, posY, color) {
 			moveElement(box, e.clientX - width / 2, e.clientY - height / 2);
 		}
 	});
+	box.addEventListener("click", (e) => {
+		if (connectionSwitch) {
+			activeBoxPair.push(e.target);
+			if (activeBoxPair.length == 2) {
+				connectedBoxes.push(activeBoxPair.concat());
+				activeBoxPair.length = 0;
+			}
+		}
+	});
 	return box;
 }
 
 function addBoxes(container, boxCount, width, height, startX, startY, space) {
 	const boxes = [];
 	for (let i = 0; i < boxCount; i++) {
-		boxes.push(addBox(container, width, height, startX + i * (width * space), startY, getRandomColor()));
+		const color = getRandomColor();
+		console.log(i, color);
+		boxes.push(addBox(container, width, height, startX + i * (width + space), startY, color));
 	}
 	return boxes;
 }
@@ -80,5 +95,53 @@ function changeColorsRandom(boxes) {
 }
 
 function getRandomColor() {
-	return `#${(Math.floor(Math.random() * 16777216)).toString(16)}`;
+	const rgbComp = getRandomRGBComponents();
+	return `rgb(${rgbComp[0]}, ${rgbComp[1]}, ${rgbComp[2]})`;
+}
+
+function getRandomRGBComponents() {
+	const rgbComponenets = new Array(3);
+	for (let i = 0; i < 3; i++) {
+		rgbComponenets[i] = Math.floor(Math.random() * 256);
+	}
+	return rgbComponenets;
+}
+
+function addConnectionButton(container, width, height, text, posX, posY) {
+	const button = document.createElement("button");
+	button.style.width = `${width}px`;
+	button.style.height = `${height}px`;
+	button.style.position = "absolute";
+	button.style.left = `${posX}px`;
+	button.style.top = `${posY}px`;
+	button.innerText = text;
+	button.type = "button";
+	setConnectionButtonColor(button);
+	button.addEventListener("click", (e) => {
+		connectionSwitch = !connectionSwitch;
+		setConnectionButtonColor(e.target);
+	});
+	container.appendChild(button);
+	return button;
+}
+
+function setConnectionButtonColor(button) {
+	button.style.backgroundColor = connectionSwitch ? "palegreen" : "palevioletred";
+}
+
+// function drawBoxConnections() {
+// 	for (const pair of connectedBoxes) {
+		
+// 	}
+// }
+
+function createCanvasAndGetContext(container) {
+	const canvas = document.createElement("canvas");
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	container.appendChild(canvas);
+	const ctx = canvas.getContext("2d");
+
+	ctx.fillStyle = "green";
+	ctx.fillRect(10, 10, 300, 300);
 }
